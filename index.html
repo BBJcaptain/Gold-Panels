@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XAU/USD Correlation Panel</title>
+    <style>
+        :root {
+            --gold:     #d4af37;
+            --gold-dim: #a08020;
+            --bg:       #0f0f0f;
+            --card:     #161616;
+            --border:   #272727;
+            --text:     #e0e0e0;
+            --sub:      #6b7280;
+            --bull:     #22c55e;
+            --bear:     #ef4444;
+            --bull-bg:  rgba(34,197,94,0.12);
+            --bear-bg:  rgba(239,68,68,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 24px 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 0.78rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 24px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1c1500 0%, #221a00 100%);
+            border: 1px solid var(--gold-dim);
+            border-radius: 12px;
+            padding: 28px 24px;
+            text-align: center;
+            max-width: 460px;
+            margin: 0 auto 18px;
+            box-shadow: 0 0 56px rgba(212,175,55,0.07);
+        }
+
+        .hero-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold-dim);
+            margin-bottom: 10px;
+        }
+
+        .hero-price {
+            font-size: 2.8rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #fff;
+            letter-spacing: 0.04em;
+        }
+
+        .hero-change {
+            font-size: 0.95rem;
+            margin-top: 7px;
+            min-height: 1.4em;
+        }
+
+        .up  { color: var(--bull); }
+        .dn  { color: var(--bear); }
+        .na  { color: var(--sub); }
+
+        .signal-strip {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 24px;
+            max-width: 460px;
+            margin: 0 auto 28px;
+        }
+
+        .strip-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--sub);
+        }
+
+        .sig-val {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        .sig-bull  { color: var(--bull); }
+        .sig-bear  { color: var(--bear); }
+        .sig-mixed { color: var(--gold); }
+        .sig-na    { color: var(--sub);  }
+
+        .strip-div { color: var(--border); }
+
+        .count {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .section-head {
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--sub);
+            margin-bottom: 8px;
+            padding-left: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .pos-accent { border-left: 3px solid var(--bull); }
+        .neg-accent { border-left: 3px solid var(--bear); }
+
+        th {
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--sub);
+            border-bottom: 1px solid var(--border);
+            font-weight: 400;
+        }
+
+        td {
+            padding: 13px 14px;
+            font-size: 0.88rem;
+            border-bottom: 1px solid #1e1e1e;
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        .a-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.88rem;
+        }
+
+        .a-desc {
+            font-size: 0.7rem;
+            color: var(--sub);
+            margin-top: 2px;
+        }
+
+        .mono { font-variant-numeric: tabular-nums; }
+
+        .pill {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 20px;
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
+
+        .pill-up { background: var(--bull-bg); color: var(--bull); }
+        .pill-dn { background: var(--bear-bg); color: var(--bear); }
+        .pill-na { background: rgba(107,114,128,0.1); color: var(--sub); }
+
+        .corr-cell {
+            font-size: 0.78rem;
+            color: var(--sub);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .sig-cell {
+            font-size: 0.76rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .loading-cell { color: var(--sub); font-style: italic; font-size: 0.84rem; }
+        .error-cell   { color: var(--bear); font-size: 0.8rem; }
+
+        footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            font-size: 0.7rem;
+            color: var(--sub);
+            margin-top: 4px;
+        }
+
+        .gold-text { color: var(--gold); }
+
+        button.refresh-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--sub);
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        button.refresh-btn:hover {
+            border-color: var(--gold-dim);
+            color: var(--gold);
+        }
+
+        .proxy-note {
+            text-align: center;
+            font-size: 0.65rem;
+            color: var(--sub);
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 520px) {
+            .hero-price { font-size: 2.1rem; }
+            th:nth-child(4), td:nth-child(4) { display: none; }
+            body { padding: 12px; }
+            .signal-strip { gap: 12px; padding: 12px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>XAU/USD Correlation Panel</h1>
+
+<div class="hero">
+    <div class="hero-label">Gold Spot Price</div>
+    <div class="hero-price" id="gold-price">...</div>
+    <div class="hero-change" id="gold-change">&nbsp;</div>
+</div>
+
+<div class="signal-strip">
+    <span class="strip-label">Composite Signal</span>
+    <span class="sig-val sig-na" id="composite-signal">Loading...</span>
+    <span class="strip-div">|</span>
+    <span class="strip-label">&#9650;</span>
+    <span class="count sig-bull" id="bull-count">0</span>
+    <span class="strip-label">&#9660;</span>
+    <span class="count sig-bear" id="bear-count">0</span>
+</div>
+
+<p class="section-head">Positive Correlations &mdash; Rising = Bullish for Gold</p>
+<table class="pos-accent">
+    <thead>
+        <tr>
+            <th>Asset</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>Correlation</th>
+            <th>Gold Signal</th>
+        </tr>
+    </thead>
+    <tbody id="pos-tbody">
+        <tr><td colspan="5" class="loading-cell">Fetching live data...</td></tr>
+    </tbody>
+</table>
+
+<p class="section-head">Negative Correlations &mdash; Rising = Bearish for Gold</p>
+<table class="neg-accent">
+    <thead>
+        <tr>
+            <th>Asset</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>Correlation</th>
+            <th>Gold Signal</th>
+        </tr>
+    </thead>
+    <tbody id="neg-tbody">
+        <tr><td colspan="5" class="loading-cell">Fetching live data...</td></tr>
+    </tbody>
+</table>
+
+<footer>
+    <span>Updated: <span id="last-updated">Never</span></span>
+    <span>Next refresh: <span class="gold-text" id="countdown">15:00</span></span>
+    <button class="refresh-btn" onclick="triggerUpdate()">&#8635; Refresh Now</button>
+</footer>
+
+<p class="proxy-note">Data via Yahoo Finance. Prices delayed up to 15 minutes during market hours.</p>
+
+<script>
+    // -------------------------------------------------------
+    // Configuration
+    // -------------------------------------------------------
+
+    // Yahoo Finance ticker symbols
+    // Forex pairs use the =X suffix convention in Yahoo Finance
+    var ASSETS = {
+        positive: [
+            {
+                id: 'xagusd', label: 'XAG/USD', desc: 'Silver Spot',
+                ticker: 'XAGUSD=X', corr: '+0.93', prefix: '$', decimals: 4
+            },
+            {
+                id: 'gdx', label: 'GDX', desc: 'VanEck Gold Miners ETF',
+                ticker: 'GDX', corr: '+0.91', prefix: '$', decimals: 2
+            },
+            {
+                id: 'gdxj', label: 'GDXJ', desc: 'Junior Gold Miners ETF',
+                ticker: 'GDXJ', corr: '+0.90', prefix: '$', decimals: 2
+            },
+            {
+                id: 'audusd', label: 'AUD/USD', desc: 'Australian Dollar',
+                ticker: 'AUDUSD=X', corr: '+0.86', prefix: '', decimals: 4
+            }
+        ],
+        negative: [
+            {
+                id: 'uup', label: 'UUP', desc: 'Invesco Dollar Index ETF',
+                ticker: 'UUP', corr: '\u22120.91', prefix: '$', decimals: 2
+            },
+            {
+                id: 'usdchf', label: 'USD/CHF', desc: 'US Dollar / Swiss Franc',
+                ticker: 'USDCHF=X', corr: '\u22120.88', prefix: '', decimals: 4
+            }
+        ]
+    };
+
+    var GOLD_TICKER  = 'XAUUSD=X';
+    var REFRESH_MS   = 900000;      // 15 minutes
+
+    // CORS proxy: routes Yahoo Finance requests through a public proxy
+    // so the browser does not get blocked by cross-origin restrictions.
+    // corsproxy.io is free and requires no key for public URLs.
+    var CORS_PROXY   = 'https://corsproxy.io/?url=';
+    var YF_BASE      = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+
+    var refreshTimeout = null;
+    var secondsLeft    = REFRESH_MS / 1000;
+
+    // -------------------------------------------------------
+    // Yahoo Finance fetch
+    // Returns { price, changePct } for any ticker.
+    // -------------------------------------------------------
+
+    async function fetchQuote(ticker) {
+        var url  = YF_BASE + encodeURIComponent(ticker) + '?range=1d&interval=1m&includePrePost=false';
+        var full = CORS_PROXY + encodeURIComponent(url);
+
+        var res = await fetch(full);
+        if (!res.ok) {
+            throw new Error('HTTP ' + res.status + ' for ' + ticker);
+        }
+
+        var json = await res.json();
+        var meta = json && json.chart && json.chart.result && json.chart.result[0]
+                   ? json.chart.result[0].meta
+                   : null;
+
+        if (!meta) {
+            throw new Error('No data returned for ' + ticker);
+        }
+
+        var price     = meta.regularMarketPrice;
+        var prevClose = meta.chartPreviousClose || meta.previousClose;
+
+        if (price == null) {
+            throw new Error('Price missing for ' + ticker);
+        }
+
+        var changePct = null;
+        if (prevClose != null && prevClose !== 0) {
+            changePct = ((price - prevClose) / prevClose) * 100;
+        }
+
+        return { price: price, changePct: changePct };
+    }
+
+    // -------------------------------------------------------
+    // Rendering helpers
+    // -------------------------------------------------------
+
+    function fmtPrice(val, prefix, decimals) {
+        if (val == null || isNaN(val)) return '\u2014';
+        return prefix + Number(val).toFixed(decimals);
+    }
+
+    function fmtChangePill(pct) {
+        if (pct == null || isNaN(pct)) {
+            return { html: '<span class="pill pill-na">N/A</span>', direction: 0 };
+        }
+        var sign = pct >= 0 ? '+' : '';
+        var cls  = pct >= 0 ? 'pill-up' : 'pill-dn';
+        return {
+            html: '<span class="pill ' + cls + '">' + sign + pct.toFixed(2) + '%</span>',
+            direction: pct >= 0 ? 1 : -1
+        };
+    }
+
+    function fmtSignalCell(goldSignal) {
+        if (goldSignal === 1)  return '<span class="sig-cell up">&#9650; Bullish</span>';
+        if (goldSignal === -1) return '<span class="sig-cell dn">&#9660; Bearish</span>';
+        return '<span class="sig-cell na">\u2014</span>';
+    }
+
+    function buildRow(asset, price, changePct, isNegative) {
+        var pill       = fmtChangePill(changePct);
+        var goldSignal = pill.direction === 0
+            ? 0
+            : (isNegative ? -pill.direction : pill.direction);
+
+        var html = [
+            '<tr>',
+            '  <td>',
+            '    <div class="a-name">' + asset.label + '</div>',
+            '    <div class="a-desc">'  + asset.desc  + '</div>',
+            '  </td>',
+            '  <td class="mono">' + fmtPrice(price, asset.prefix, asset.decimals) + '</td>',
+            '  <td>' + pill.html + '</td>',
+            '  <td class="corr-cell">' + asset.corr + '</td>',
+            '  <td>' + fmtSignalCell(goldSignal) + '</td>',
+            '</tr>'
+        ].join('\n');
+
+        return { html: html, goldSignal: goldSignal };
+    }
+
+    function buildErrorRow(label, err) {
+        return {
+            html: '<tr><td colspan="5" class="error-cell">&#9888; ' + label + ': ' + (err.message || 'Error') + '</td></tr>',
+            goldSignal: 0
+        };
+    }
+
+    // -------------------------------------------------------
+    // Fetch and render a group of assets
+    // -------------------------------------------------------
+
+    async function renderGroup(assets, tbodyId, isNegative) {
+        var bull = 0;
+        var bear = 0;
+
+        var rowPromises = assets.map(async function(asset) {
+            try {
+                var quote = await fetchQuote(asset.ticker);
+                return buildRow(asset, quote.price, quote.changePct, isNegative);
+            } catch (err) {
+                console.error('Failed:', asset.label, err);
+                return buildErrorRow(asset.label, err);
+            }
+        });
+
+        var rows = await Promise.all(rowPromises);
+
+        rows.forEach(function(r) {
+            if (r.goldSignal === 1)  bull++;
+            if (r.goldSignal === -1) bear++;
+        });
+
+        document.getElementById(tbodyId).innerHTML =
+            rows.map(function(r) { return r.html; }).join('');
+
+        return { bull: bull, bear: bear };
+    }
+
+    // -------------------------------------------------------
+    // Main update cycle
+    // -------------------------------------------------------
+
+    async function update() {
+        // Gold hero price
+        try {
+            var goldQuote = await fetchQuote(GOLD_TICKER);
+
+            document.getElementById('gold-price').textContent =
+                '$' + Number(goldQuote.price).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+            var changeEl = document.getElementById('gold-change');
+            if (goldQuote.changePct !== null) {
+                var sign = goldQuote.changePct >= 0 ? '+' : '';
+                var cls  = goldQuote.changePct >= 0 ? 'up' : 'dn';
+                changeEl.innerHTML =
+                    '<span class="' + cls + '">' + sign +
+                    goldQuote.changePct.toFixed(2) + '% today</span>';
+            } else {
+                changeEl.innerHTML = '&nbsp;';
+            }
+        } catch (err) {
+            console.error('Gold fetch failed:', err);
+            document.getElementById('gold-price').textContent = 'Error';
+        }
+
+        // Correlated asset groups
+        var results = await Promise.all([
+            renderGroup(ASSETS.positive, 'pos-tbody', false),
+            renderGroup(ASSETS.negative, 'neg-tbody', true)
+        ]);
+
+        var bull = results[0].bull + results[1].bull;
+        var bear = results[0].bear + results[1].bear;
+
+        document.getElementById('bull-count').textContent = bull;
+        document.getElementById('bear-count').textContent = bear;
+
+        var sigEl = document.getElementById('composite-signal');
+
+        if (bull === 0 && bear === 0) {
+            sigEl.textContent = 'NO DATA';
+            sigEl.className   = 'sig-val sig-na';
+        } else if (bull >= bear * 2) {
+            sigEl.textContent = 'STRONGLY BULLISH';
+            sigEl.className   = 'sig-val sig-bull';
+        } else if (bull > bear) {
+            sigEl.textContent = 'BULLISH';
+            sigEl.className   = 'sig-val sig-bull';
+        } else if (bear >= bull * 2) {
+            sigEl.textContent = 'STRONGLY BEARISH';
+            sigEl.className   = 'sig-val sig-bear';
+        } else if (bear > bull) {
+            sigEl.textContent = 'BEARISH';
+            sigEl.className   = 'sig-val sig-bear';
+        } else {
+            sigEl.textContent = 'MIXED';
+            sigEl.className   = 'sig-val sig-mixed';
+        }
+
+        document.getElementById('last-updated').textContent =
+            new Date().toLocaleTimeString('en-GB');
+    }
+
+    // -------------------------------------------------------
+    // Scheduler and countdown
+    // -------------------------------------------------------
+
+    function scheduleNext() {
+        if (refreshTimeout) clearTimeout(refreshTimeout);
+        secondsLeft    = REFRESH_MS / 1000;
+        refreshTimeout = setTimeout(function() {
+            update().catch(console.error).finally(scheduleNext);
+        }, REFRESH_MS);
+    }
+
+    function triggerUpdate() {
+        if (refreshTimeout) clearTimeout(refreshTimeout);
+        update().catch(console.error).finally(scheduleNext);
+    }
+
+    setInterval(function() {
+        if (secondsLeft > 0) secondsLeft--;
+        var m = Math.floor(secondsLeft / 60);
+        var s = secondsLeft % 60;
+        document.getElementById('countdown').textContent =
+            String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }, 1000);
+
+    triggerUpdate();
+</script>
+</body>
+</html>
