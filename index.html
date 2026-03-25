@@ -6,17 +6,22 @@
     <title>XAU/USD Correlation Panel</title>
     <style>
         :root {
-            --gold:     #d4af37;
-            --gold-dim: #a08020;
-            --bg:       #0f0f0f;
-            --card:     #161616;
-            --border:   #272727;
-            --text:     #e0e0e0;
-            --sub:      #6b7280;
-            --bull:     #22c55e;
-            --bear:     #ef4444;
-            --bull-bg:  rgba(34,197,94,0.12);
-            --bear-bg:  rgba(239,68,68,0.12);
+            --gold:       #d4af37;
+            --gold-dim:   #7a5e0f;
+            --gold-glow:  rgba(212,175,55,0.09);
+            --bg:         #000000;
+            --surface:    #0b0b0b;
+            --card:       #0f0f0f;
+            --border:     #1c1c1c;
+            --border-lit: #2a2a2a;
+            --text:       #d4d4d4;
+            --sub:        #4b5563;
+            --bull:       #16a34a;
+            --bull-bright:#22c55e;
+            --bear:       #b91c1c;
+            --bear-bright:#ef4444;
+            --bull-bg:    rgba(22,163,74,0.13);
+            --bear-bg:    rgba(185,28,28,0.13);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,202 +29,348 @@
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', Arial, sans-serif;
-            padding: 24px 20px;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            padding: 0 0 60px;
             min-height: 100vh;
         }
 
-        h1 {
+        /* Header */
+        .page-header {
+            padding: 36px 24px 28px;
             text-align: center;
-            font-size: 0.78rem;
-            letter-spacing: 0.28em;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.82rem;
+            font-weight: 400;
+            letter-spacing: 0.45em;
             text-transform: uppercase;
             color: var(--gold);
-            margin-bottom: 24px;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            color: var(--sub);
+            text-transform: uppercase;
+        }
+
+        /* Layout */
+        .layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero row */
+        .hero-row {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 16px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
         }
 
         .hero {
-            background: linear-gradient(135deg, #1c1500 0%, #221a00 100%);
+            background: var(--surface);
             border: 1px solid var(--gold-dim);
-            border-radius: 12px;
-            padding: 28px 24px;
+            border-radius: 16px;
+            padding: 32px 40px;
             text-align: center;
-            max-width: 460px;
-            margin: 0 auto 18px;
-            box-shadow: 0 0 56px rgba(212,175,55,0.07);
+            min-width: 260px;
+            box-shadow: 0 0 80px var(--gold-glow), inset 0 1px 0 rgba(212,175,55,0.06);
+            position: relative;
+            overflow: hidden;
         }
 
-        .hero-label {
-            font-size: 0.65rem;
-            letter-spacing: 0.22em;
+        .hero-eyebrow {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.35em;
             text-transform: uppercase;
             color: var(--gold-dim);
-            margin-bottom: 10px;
+            margin-bottom: 14px;
         }
 
         .hero-price {
-            font-size: 2.8rem;
+            font-size: 3rem;
             font-weight: 700;
             font-variant-numeric: tabular-nums;
-            color: #fff;
-            letter-spacing: 0.04em;
+            color: #ffffff;
+            letter-spacing: 0.02em;
+            line-height: 1;
         }
 
         .hero-change {
-            font-size: 0.95rem;
-            margin-top: 7px;
+            font-size: 0.9rem;
+            margin-top: 10px;
             min-height: 1.4em;
-        }
-
-        .up  { color: var(--bull); }
-        .dn  { color: var(--bear); }
-        .na  { color: var(--sub); }
-
-        .signal-strip {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 14px 24px;
-            max-width: 460px;
-            margin: 0 auto 28px;
-        }
-
-        .strip-label {
-            font-size: 0.65rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--sub);
-        }
-
-        .sig-val {
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-        }
-
-        .sig-bull  { color: var(--bull); }
-        .sig-bear  { color: var(--bear); }
-        .sig-mixed { color: var(--gold); }
-        .sig-na    { color: var(--sub);  }
-
-        .strip-div { color: var(--border); }
-
-        .count {
-            font-size: 0.95rem;
-            font-weight: 700;
-        }
-
-        .section-head {
-            font-size: 0.62rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--sub);
-            margin-bottom: 8px;
-            padding-left: 3px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-        }
-
-        .pos-accent { border-left: 3px solid var(--bull); }
-        .neg-accent { border-left: 3px solid var(--bear); }
-
-        th {
-            padding: 10px 14px;
-            text-align: left;
-            font-size: 0.62rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--sub);
-            border-bottom: 1px solid var(--border);
-            font-weight: 400;
-        }
-
-        td {
-            padding: 13px 14px;
-            font-size: 0.88rem;
-            border-bottom: 1px solid #1e1e1e;
-            vertical-align: middle;
-        }
-
-        tr:last-child td { border-bottom: none; }
-
-        .a-name {
-            font-weight: 600;
-            color: #fff;
-            font-size: 0.88rem;
-        }
-
-        .a-desc {
-            font-size: 0.7rem;
-            color: var(--sub);
-            margin-top: 2px;
-        }
-
-        .mono { font-variant-numeric: tabular-nums; }
-
-        .pill {
-            display: inline-block;
-            padding: 2px 9px;
-            border-radius: 20px;
-            font-size: 0.76rem;
-            font-weight: 600;
-        }
-
-        .pill-up { background: var(--bull-bg); color: var(--bull); }
-        .pill-dn { background: var(--bear-bg); color: var(--bear); }
-        .pill-na { background: rgba(107,114,128,0.1); color: var(--sub); }
-
-        .corr-cell {
-            font-size: 0.78rem;
-            color: var(--sub);
             font-variant-numeric: tabular-nums;
         }
 
-        .sig-cell {
-            font-size: 0.76rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .signal-card {
+            background: var(--surface);
+            border: 1px solid var(--border-lit);
+            border-radius: 16px;
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            min-width: 220px;
         }
 
-        .loading-cell { color: var(--sub); font-style: italic; font-size: 0.84rem; }
-        .error-cell   { color: var(--bear); font-size: 0.8rem; }
+        .signal-eyebrow {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--sub);
+        }
 
-        footer {
+        .signal-main {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            line-height: 1.1;
+            text-align: center;
+        }
+
+        .signal-tally {
+            display: flex;
+            gap: 16px;
+        }
+
+        .tally-item {
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .tally-num {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        /* Section headings */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .section-label-text {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--sub);
+            white-space: nowrap;
+        }
+
+        .section-rule {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-pill {
+            font-size: 0.58rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 2px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .pill-bull { background: var(--bull-bg); color: var(--bull-bright); }
+        .pill-bear { background: var(--bear-bg); color: var(--bear-bright); }
+
+        /* Card grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 44px;
+        }
+
+        /* Asset card */
+        .asset-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.18s;
+        }
+
+        .asset-card:hover { border-color: var(--border-lit); }
+
+        .card-accent {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+        }
+
+        .pos-card .card-accent { background: linear-gradient(90deg, var(--bull), transparent); }
+        .neg-card .card-accent { background: linear-gradient(90deg, var(--bear), transparent); }
+
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .card-name {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .card-desc {
+            font-size: 0.6rem;
+            color: var(--sub);
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+
+        .corr-tag {
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .corr-pos { background: var(--bull-bg); color: var(--bull-bright); }
+        .corr-neg { background: var(--bear-bg); color: var(--bear-bright); }
+
+        .card-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .card-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .change-pill {
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 1px 7px;
+            border-radius: 20px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .cpill-up { background: var(--bull-bg); color: var(--bull-bright); }
+        .cpill-dn { background: var(--bear-bg); color: var(--bear-bright); }
+        .cpill-na { background: rgba(75,85,99,0.12); color: var(--sub); }
+
+        .sparkline {
+            height: 34px;
+            overflow: hidden;
+            border-radius: 3px;
+        }
+
+        .sparkline svg {
+            display: block;
+            width: 100%;
+            height: 34px;
+        }
+
+        .card-signal {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-align: center;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .csig-bull { color: var(--bull-bright); }
+        .csig-bear { color: var(--bear-bright); }
+        .csig-na   { color: var(--sub); }
+        .sig-mixed { color: var(--gold); }
+
+        .card-loading {
+            font-size: 0.72rem;
+            color: var(--sub);
+            font-style: italic;
+            padding: 8px 0;
+        }
+
+        .card-err {
+            font-size: 0.68rem;
+            color: var(--bear-bright);
+            padding: 4px 0;
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        .page-footer {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            gap: 18px;
-            font-size: 0.7rem;
+            gap: 20px;
+            font-size: 0.66rem;
             color: var(--sub);
-            margin-top: 4px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-note {
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.06em;
+            color: var(--sub);
+            opacity: 0.45;
+            margin-top: 16px;
         }
 
         .gold-text { color: var(--gold); }
+        .up { color: var(--bull-bright); }
+        .dn { color: var(--bear-bright); }
 
         button.refresh-btn {
             background: none;
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-lit);
             color: var(--sub);
             border-radius: 6px;
-            padding: 4px 12px;
-            font-size: 0.7rem;
+            padding: 4px 13px;
+            font-size: 0.66rem;
             cursor: pointer;
             font-family: inherit;
-            transition: border-color 0.2s, color 0.2s;
+            transition: border-color 0.18s, color 0.18s;
         }
 
         button.refresh-btn:hover {
@@ -227,328 +378,366 @@
             color: var(--gold);
         }
 
-        .proxy-note {
-            text-align: center;
-            font-size: 0.65rem;
-            color: var(--sub);
-            margin-bottom: 20px;
-            opacity: 0.6;
+        /* Responsive */
+        @media (max-width: 1100px) { .card-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 860px)  { .card-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 600px)  {
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-price { font-size: 2.3rem; }
         }
-
-        @media (max-width: 520px) {
-            .hero-price { font-size: 2.1rem; }
-            th:nth-child(4), td:nth-child(4) { display: none; }
-            body { padding: 12px; }
-            .signal-strip { gap: 12px; padding: 12px 14px; }
-        }
+        @media (max-width: 380px)  { .card-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<h1>XAU/USD Correlation Panel</h1>
+<header class="page-header">
+    <div class="page-title">XAU / USD &nbsp; Correlation Panel</div>
+    <div class="page-subtitle">Live Asset Signals &nbsp;&middot;&nbsp; Gold Market Intelligence</div>
+</header>
 
-<div class="hero">
-    <div class="hero-label">Gold Spot Price</div>
-    <div class="hero-price" id="gold-price">...</div>
-    <div class="hero-change" id="gold-change">&nbsp;</div>
+<div class="layout">
+
+    <div class="hero-row">
+        <div class="hero">
+            <div class="hero-eyebrow">Gold Spot Price</div>
+            <div class="hero-price" id="gold-price">...</div>
+            <div class="hero-change" id="gold-change">&nbsp;</div>
+        </div>
+        <div class="signal-card">
+            <div class="signal-eyebrow">Composite Signal</div>
+            <div class="signal-main csig-na" id="composite-signal">Loading</div>
+            <div class="signal-tally">
+                <div class="tally-item">
+                    <span style="color:var(--bull-bright)">&#9650;</span>
+                    <span class="tally-num" style="color:var(--bull-bright)" id="bull-count">0</span>
+                    <span style="color:var(--sub)">bull</span>
+                </div>
+                <div class="tally-item">
+                    <span style="color:var(--bear-bright)">&#9660;</span>
+                    <span class="tally-num" style="color:var(--bear-bright)" id="bear-count">0</span>
+                    <span style="color:var(--sub)">bear</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-label">
+        <span class="section-label-text">Positive Correlations</span>
+        <div class="section-rule"></div>
+        <span class="section-pill pill-bull">Rising = Bullish Gold</span>
+    </div>
+    <div class="card-grid" id="pos-grid"></div>
+
+    <div class="section-label">
+        <span class="section-label-text">Negative Correlations</span>
+        <div class="section-rule"></div>
+        <span class="section-pill pill-bear">Rising = Bearish Gold</span>
+    </div>
+    <div class="card-grid" id="neg-grid"></div>
+
+    <div class="page-footer">
+        <span>Updated: <span id="last-updated">Never</span></span>
+        <span>Next refresh in <span class="gold-text" id="countdown">15:00</span></span>
+        <button class="refresh-btn" onclick="triggerUpdate()">&#8635; Refresh Now</button>
+    </div>
+    <p class="footer-note">Data via Yahoo Finance &nbsp;&middot;&nbsp; Prices delayed up to 15 minutes &nbsp;&middot;&nbsp; Correlation coefficients are 1yr rolling approximations</p>
+
 </div>
-
-<div class="signal-strip">
-    <span class="strip-label">Composite Signal</span>
-    <span class="sig-val sig-na" id="composite-signal">Loading...</span>
-    <span class="strip-div">|</span>
-    <span class="strip-label">&#9650;</span>
-    <span class="count sig-bull" id="bull-count">0</span>
-    <span class="strip-label">&#9660;</span>
-    <span class="count sig-bear" id="bear-count">0</span>
-</div>
-
-<p class="section-head">Positive Correlations &mdash; Rising = Bullish for Gold</p>
-<table class="pos-accent">
-    <thead>
-        <tr>
-            <th>Asset</th>
-            <th>Price</th>
-            <th>Change</th>
-            <th>Correlation</th>
-            <th>Gold Signal</th>
-        </tr>
-    </thead>
-    <tbody id="pos-tbody">
-        <tr><td colspan="5" class="loading-cell">Fetching live data...</td></tr>
-    </tbody>
-</table>
-
-<p class="section-head">Negative Correlations &mdash; Rising = Bearish for Gold</p>
-<table class="neg-accent">
-    <thead>
-        <tr>
-            <th>Asset</th>
-            <th>Price</th>
-            <th>Change</th>
-            <th>Correlation</th>
-            <th>Gold Signal</th>
-        </tr>
-    </thead>
-    <tbody id="neg-tbody">
-        <tr><td colspan="5" class="loading-cell">Fetching live data...</td></tr>
-    </tbody>
-</table>
-
-<footer>
-    <span>Updated: <span id="last-updated">Never</span></span>
-    <span>Next refresh: <span class="gold-text" id="countdown">15:00</span></span>
-    <button class="refresh-btn" onclick="triggerUpdate()">&#8635; Refresh Now</button>
-</footer>
-
-<p class="proxy-note">Data via Yahoo Finance. Prices delayed up to 15 minutes during market hours.</p>
 
 <script>
-    // -------------------------------------------------------
-    // Configuration
-    // -------------------------------------------------------
+    var CORS_PROXY = 'https://corsproxy.io/?url=';
+    var YF_BASE    = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+    var REFRESH_MS = 900000;
 
-    // Yahoo Finance ticker symbols
-    // Forex pairs use the =X suffix convention in Yahoo Finance
+    // GC=F (gold futures) is more reliably served than XAUUSD=X through a CORS proxy.
+    // XAUUSD=X is kept as fallback.
+    var GOLD_TICKERS = ['GC=F', 'XAUUSD=X'];
+
     var ASSETS = {
         positive: [
-            {
-                id: 'xagusd', label: 'XAG/USD', desc: 'Silver Spot',
-                ticker: 'XAGUSD=X', corr: '+0.93', prefix: '$', decimals: 4
-            },
-            {
-                id: 'gdx', label: 'GDX', desc: 'VanEck Gold Miners ETF',
-                ticker: 'GDX', corr: '+0.91', prefix: '$', decimals: 2
-            },
-            {
-                id: 'gdxj', label: 'GDXJ', desc: 'Junior Gold Miners ETF',
-                ticker: 'GDXJ', corr: '+0.90', prefix: '$', decimals: 2
-            },
-            {
-                id: 'audusd', label: 'AUD/USD', desc: 'Australian Dollar',
-                ticker: 'AUDUSD=X', corr: '+0.86', prefix: '', decimals: 4
-            }
+            { id: 'xagusd', label: 'XAG/USD', desc: 'Silver Spot',               ticker: 'XAGUSD=X', corr: '+0.93', prefix: '$', decimals: 4 },
+            { id: 'gdx',    label: 'GDX',     desc: 'VanEck Gold Miners ETF',     ticker: 'GDX',      corr: '+0.92', prefix: '$', decimals: 2 },
+            { id: 'aem',    label: 'AEM',     desc: 'Agnico Eagle Mines',         ticker: 'AEM',      corr: '+0.92', prefix: '$', decimals: 2 },
+            { id: 'wpm',    label: 'WPM',     desc: 'Wheaton Precious Metals',    ticker: 'WPM',      corr: '+0.91', prefix: '$', decimals: 2 },
+            { id: 'gdxj',   label: 'GDXJ',    desc: 'Junior Gold Miners ETF',     ticker: 'GDXJ',     corr: '+0.91', prefix: '$', decimals: 2 },
+            { id: 'sil',    label: 'SIL',     desc: 'Global X Silver Miners',     ticker: 'SIL',      corr: '+0.91', prefix: '$', decimals: 2 },
+            { id: 'nem',    label: 'NEM',     desc: 'Newmont Corporation',        ticker: 'NEM',      corr: '+0.91', prefix: '$', decimals: 2 },
+            { id: 'rgld',   label: 'RGLD',    desc: 'Royal Gold Inc',             ticker: 'RGLD',     corr: '+0.90', prefix: '$', decimals: 2 },
+            { id: 'fnv',    label: 'FNV',     desc: 'Franco-Nevada Corp',         ticker: 'FNV',      corr: '+0.90', prefix: '$', decimals: 2 },
+            { id: 'gold',   label: 'GOLD',    desc: 'Barrick Gold Corp',          ticker: 'GOLD',     corr: '+0.90', prefix: '$', decimals: 2 }
         ],
         negative: [
-            {
-                id: 'uup', label: 'UUP', desc: 'Invesco Dollar Index ETF',
-                ticker: 'UUP', corr: '\u22120.91', prefix: '$', decimals: 2
-            },
-            {
-                id: 'usdchf', label: 'USD/CHF', desc: 'US Dollar / Swiss Franc',
-                ticker: 'USDCHF=X', corr: '\u22120.88', prefix: '', decimals: 4
-            }
+            { id: 'uup',    label: 'UUP',     desc: 'Invesco Dollar Index ETF',      ticker: 'UUP',      corr: '\u22120.91', prefix: '$', decimals: 2 },
+            { id: 'euo',    label: 'EUO',     desc: 'ProShares UltraShort Euro',     ticker: 'EUO',      corr: '\u22120.88', prefix: '$', decimals: 2 },
+            { id: 'usdchf', label: 'USD/CHF', desc: 'US Dollar vs Swiss Franc',      ticker: 'USDCHF=X', corr: '\u22120.88', prefix: '',  decimals: 4 },
+            { id: 'usddkk', label: 'USD/DKK', desc: 'US Dollar vs Danish Krone',     ticker: 'USDDKK=X', corr: '\u22120.87', prefix: '',  decimals: 4 },
+            { id: 'usdsek', label: 'USD/SEK', desc: 'US Dollar vs Swedish Krona',    ticker: 'USDSEK=X', corr: '\u22120.85', prefix: '',  decimals: 4 },
+            { id: 'usdjpy', label: 'USD/JPY', desc: 'US Dollar vs Japanese Yen',     ticker: 'USDJPY=X', corr: '\u22120.85', prefix: '',  decimals: 2 },
+            { id: 'usdnok', label: 'USD/NOK', desc: 'US Dollar vs Norwegian Krone',  ticker: 'USDNOK=X', corr: '\u22120.84', prefix: '',  decimals: 4 },
+            { id: 'ycs',    label: 'YCS',     desc: 'ProShares UltraShort Yen',      ticker: 'YCS',      corr: '\u22120.84', prefix: '$', decimals: 2 },
+            { id: 'usdcad', label: 'USD/CAD', desc: 'US Dollar vs Canadian Dollar',  ticker: 'USDCAD=X', corr: '\u22120.82', prefix: '',  decimals: 4 },
+            { id: 'usdsgd', label: 'USD/SGD', desc: 'US Dollar vs Singapore Dollar', ticker: 'USDSGD=X', corr: '\u22120.81', prefix: '',  decimals: 4 }
         ]
     };
-
-    var GOLD_TICKER  = 'XAUUSD=X';
-    var REFRESH_MS   = 900000;      // 15 minutes
-
-    // CORS proxy: routes Yahoo Finance requests through a public proxy
-    // so the browser does not get blocked by cross-origin restrictions.
-    // corsproxy.io is free and requires no key for public URLs.
-    var CORS_PROXY   = 'https://corsproxy.io/?url=';
-    var YF_BASE      = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 
     var refreshTimeout = null;
     var secondsLeft    = REFRESH_MS / 1000;
 
-    // -------------------------------------------------------
-    // Yahoo Finance fetch
-    // Returns { price, changePct } for any ticker.
-    // -------------------------------------------------------
+    // ----------------------------------------------------------
+    // Fetch
+    // ----------------------------------------------------------
 
     async function fetchQuote(ticker) {
-        var url  = YF_BASE + encodeURIComponent(ticker) + '?range=1d&interval=1m&includePrePost=false';
+        var url  = YF_BASE + encodeURIComponent(ticker) +
+                   '?range=1d&interval=5m&includePrePost=false';
         var full = CORS_PROXY + encodeURIComponent(url);
+        var res  = await fetch(full);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
 
-        var res = await fetch(full);
-        if (!res.ok) {
-            throw new Error('HTTP ' + res.status + ' for ' + ticker);
-        }
+        var json   = await res.json();
+        var result = json && json.chart && json.chart.result && json.chart.result[0];
+        if (!result) throw new Error('No data for ' + ticker);
 
-        var json = await res.json();
-        var meta = json && json.chart && json.chart.result && json.chart.result[0]
-                   ? json.chart.result[0].meta
-                   : null;
+        var meta  = result.meta;
+        var price = meta.regularMarketPrice;
+        if (price == null) throw new Error('No price for ' + ticker);
 
-        if (!meta) {
-            throw new Error('No data returned for ' + ticker);
-        }
+        var prev      = meta.chartPreviousClose || meta.previousClose || null;
+        var changePct = (prev && prev !== 0) ? ((price - prev) / prev) * 100 : null;
 
-        var price     = meta.regularMarketPrice;
-        var prevClose = meta.chartPreviousClose || meta.previousClose;
+        var raw = result.indicators
+               && result.indicators.quote
+               && result.indicators.quote[0]
+               ? (result.indicators.quote[0].close || [])
+               : [];
+        var sparkline = raw.filter(function(v) { return v != null; });
 
-        if (price == null) {
-            throw new Error('Price missing for ' + ticker);
-        }
-
-        var changePct = null;
-        if (prevClose != null && prevClose !== 0) {
-            changePct = ((price - prevClose) / prevClose) * 100;
-        }
-
-        return { price: price, changePct: changePct };
+        return { price: price, changePct: changePct, sparkline: sparkline };
     }
 
-    // -------------------------------------------------------
-    // Rendering helpers
-    // -------------------------------------------------------
-
-    function fmtPrice(val, prefix, decimals) {
-        if (val == null || isNaN(val)) return '\u2014';
-        return prefix + Number(val).toFixed(decimals);
+    async function fetchGold() {
+        var lastErr;
+        for (var i = 0; i < GOLD_TICKERS.length; i++) {
+            try { return await fetchQuote(GOLD_TICKERS[i]); }
+            catch (e) { lastErr = e; }
+        }
+        throw lastErr;
     }
 
-    function fmtChangePill(pct) {
-        if (pct == null || isNaN(pct)) {
-            return { html: '<span class="pill pill-na">N/A</span>', direction: 0 };
+    // ----------------------------------------------------------
+    // Sparkline
+    // ----------------------------------------------------------
+
+    function sparklineSVG(prices, changePct) {
+        if (!prices || prices.length < 3) {
+            return '<svg viewBox="0 0 100 34" preserveAspectRatio="none">' +
+                   '<line x1="0" y1="17" x2="100" y2="17" stroke="#222" stroke-width="1"/>' +
+                   '</svg>';
         }
-        var sign = pct >= 0 ? '+' : '';
-        var cls  = pct >= 0 ? 'pill-up' : 'pill-dn';
+        var pts  = prices.slice(-78);
+        var min  = Math.min.apply(null, pts);
+        var max  = Math.max.apply(null, pts);
+        var span = (max - min) || 1;
+        var W = 100; var H = 34; var pad = 3;
+
+        var coords = pts.map(function(p, i) {
+            var x = (i / (pts.length - 1)) * W;
+            var y = H - pad - ((p - min) / span) * (H - pad * 2);
+            return x.toFixed(1) + ',' + y.toFixed(1);
+        });
+
+        var up     = changePct == null ? null : (changePct >= 0);
+        var stroke = up === null ? '#3a3a3a' : (up ? '#16a34a' : '#b91c1c');
+        var fill   = up === null
+            ? 'rgba(58,58,58,0.06)'
+            : (up ? 'rgba(22,163,74,0.07)' : 'rgba(185,28,28,0.07)');
+
+        var lastX  = coords[coords.length - 1].split(',')[0];
+        var fillPt = coords.join(' ') + ' ' + lastX + ',' + H + ' 0,' + H;
+
+        return '<svg viewBox="0 0 ' + W + ' ' + H +
+               '" preserveAspectRatio="none" width="100%" height="34">' +
+               '<polygon points="' + fillPt + '" fill="' + fill + '"/>' +
+               '<polyline points="' + coords.join(' ') +
+               '" fill="none" stroke="' + stroke +
+               '" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+               '</svg>';
+    }
+
+    // ----------------------------------------------------------
+    // Card builders
+    // ----------------------------------------------------------
+
+    function getChangeInfo(changePct) {
+        if (changePct == null) {
+            return { html: '<span class="change-pill cpill-na">N/A</span>', dir: 0 };
+        }
+        var sign = changePct >= 0 ? '+' : '';
+        var cls  = changePct >= 0 ? 'cpill-up' : 'cpill-dn';
         return {
-            html: '<span class="pill ' + cls + '">' + sign + pct.toFixed(2) + '%</span>',
-            direction: pct >= 0 ? 1 : -1
+            html: '<span class="change-pill ' + cls + '">' +
+                  sign + changePct.toFixed(2) + '%</span>',
+            dir: changePct >= 0 ? 1 : -1
         };
     }
 
-    function fmtSignalCell(goldSignal) {
-        if (goldSignal === 1)  return '<span class="sig-cell up">&#9650; Bullish</span>';
-        if (goldSignal === -1) return '<span class="sig-cell dn">&#9660; Bearish</span>';
-        return '<span class="sig-cell na">\u2014</span>';
+    function getSignalHtml(gs) {
+        if (gs === 1)  return '<span class="csig-bull">&#9650;&nbsp;Bullish</span>';
+        if (gs === -1) return '<span class="csig-bear">&#9660;&nbsp;Bearish</span>';
+        return '<span class="csig-na">Neutral</span>';
     }
 
-    function buildRow(asset, price, changePct, isNegative) {
-        var pill       = fmtChangePill(changePct);
-        var goldSignal = pill.direction === 0
-            ? 0
-            : (isNegative ? -pill.direction : pill.direction);
+    function buildCard(asset, quote, isNeg) {
+        var ch    = getChangeInfo(quote.changePct);
+        var gs    = ch.dir === 0 ? 0 : (isNeg ? -ch.dir : ch.dir);
+        var side  = isNeg ? 'neg-card' : 'pos-card';
+        var ctag  = isNeg ? 'corr-neg' : 'corr-pos';
+        var price = asset.prefix + Number(quote.price).toFixed(asset.decimals);
+        var spark = sparklineSVG(quote.sparkline, quote.changePct);
 
-        var html = [
-            '<tr>',
-            '  <td>',
-            '    <div class="a-name">' + asset.label + '</div>',
-            '    <div class="a-desc">'  + asset.desc  + '</div>',
-            '  </td>',
-            '  <td class="mono">' + fmtPrice(price, asset.prefix, asset.decimals) + '</td>',
-            '  <td>' + pill.html + '</td>',
-            '  <td class="corr-cell">' + asset.corr + '</td>',
-            '  <td>' + fmtSignalCell(goldSignal) + '</td>',
-            '</tr>'
-        ].join('\n');
-
-        return { html: html, goldSignal: goldSignal };
-    }
-
-    function buildErrorRow(label, err) {
         return {
-            html: '<tr><td colspan="5" class="error-cell">&#9888; ' + label + ': ' + (err.message || 'Error') + '</td></tr>',
-            goldSignal: 0
+            goldSignal: gs,
+            html: '<div class="asset-card ' + side + '">' +
+                  '<div class="card-accent"></div>' +
+                  '<div class="card-head">' +
+                    '<div>' +
+                      '<div class="card-name">' + asset.label + '</div>' +
+                      '<div class="card-desc">'  + asset.desc  + '</div>' +
+                    '</div>' +
+                    '<span class="corr-tag ' + ctag + '">' + asset.corr + '</span>' +
+                  '</div>' +
+                  '<div class="card-price-row">' +
+                    '<span class="card-price">' + price + '</span>' +
+                    ch.html +
+                  '</div>' +
+                  '<div class="sparkline">' + spark + '</div>' +
+                  '<div class="card-signal">' + getSignalHtml(gs) + '</div>' +
+                  '</div>'
         };
     }
 
-    // -------------------------------------------------------
-    // Fetch and render a group of assets
-    // -------------------------------------------------------
+    function buildErrCard(asset, err, isNeg) {
+        var side = isNeg ? 'neg-card' : 'pos-card';
+        var ctag = isNeg ? 'corr-neg' : 'corr-pos';
+        return {
+            goldSignal: 0,
+            html: '<div class="asset-card ' + side + '">' +
+                  '<div class="card-accent"></div>' +
+                  '<div class="card-head">' +
+                    '<div>' +
+                      '<div class="card-name">' + asset.label + '</div>' +
+                      '<div class="card-desc">'  + asset.desc  + '</div>' +
+                    '</div>' +
+                    '<span class="corr-tag ' + ctag + '">' + asset.corr + '</span>' +
+                  '</div>' +
+                  '<div class="card-err">&#9888; ' + (err.message || 'Fetch failed') + '</div>' +
+                  '<div class="card-signal"><span class="csig-na">Neutral</span></div>' +
+                  '</div>'
+        };
+    }
 
-    async function renderGroup(assets, tbodyId, isNegative) {
+    function skeletonCard(asset, isNeg) {
+        var side = isNeg ? 'neg-card' : 'pos-card';
+        return '<div class="asset-card ' + side + '">' +
+               '<div class="card-accent"></div>' +
+               '<div class="card-name">' + asset.label + '</div>' +
+               '<div class="card-loading">Loading...</div>' +
+               '</div>';
+    }
+
+    // ----------------------------------------------------------
+    // Render group
+    // ----------------------------------------------------------
+
+    async function renderGroup(assets, gridId, isNeg) {
+        document.getElementById(gridId).innerHTML =
+            assets.map(function(a) { return skeletonCard(a, isNeg); }).join('');
+
         var bull = 0;
         var bear = 0;
 
-        var rowPromises = assets.map(async function(asset) {
+        var promises = assets.map(async function(asset) {
             try {
-                var quote = await fetchQuote(asset.ticker);
-                return buildRow(asset, quote.price, quote.changePct, isNegative);
-            } catch (err) {
-                console.error('Failed:', asset.label, err);
-                return buildErrorRow(asset.label, err);
+                var q = await fetchQuote(asset.ticker);
+                return buildCard(asset, q, isNeg);
+            } catch (e) {
+                console.error(asset.label, e);
+                return buildErrCard(asset, e, isNeg);
             }
         });
 
-        var rows = await Promise.all(rowPromises);
-
-        rows.forEach(function(r) {
-            if (r.goldSignal === 1)  bull++;
-            if (r.goldSignal === -1) bear++;
+        var cards = await Promise.all(promises);
+        cards.forEach(function(c) {
+            if (c.goldSignal === 1)  bull++;
+            if (c.goldSignal === -1) bear++;
         });
 
-        document.getElementById(tbodyId).innerHTML =
-            rows.map(function(r) { return r.html; }).join('');
+        document.getElementById(gridId).innerHTML =
+            cards.map(function(c) { return c.html; }).join('');
 
         return { bull: bull, bear: bear };
     }
 
-    // -------------------------------------------------------
-    // Main update cycle
-    // -------------------------------------------------------
+    // ----------------------------------------------------------
+    // Composite signal
+    // ----------------------------------------------------------
+
+    function computeSignal(bull, bear) {
+        var total = bull + bear;
+        if (total === 0) return { text: 'No Data',        cls: 'csig-na' };
+        var r = bull / total;
+        if (r >= 0.80)   return { text: 'Strongly Bullish', cls: 'csig-bull' };
+        if (r >= 0.60)   return { text: 'Bullish',          cls: 'csig-bull' };
+        if (r >= 0.40)   return { text: 'Mixed',            cls: 'sig-mixed' };
+        if (r >= 0.20)   return { text: 'Bearish',          cls: 'csig-bear' };
+        return                   { text: 'Strongly Bearish', cls: 'csig-bear' };
+    }
+
+    // ----------------------------------------------------------
+    // Main update
+    // ----------------------------------------------------------
 
     async function update() {
-        // Gold hero price
         try {
-            var goldQuote = await fetchQuote(GOLD_TICKER);
-
+            var g = await fetchGold();
             document.getElementById('gold-price').textContent =
-                '$' + Number(goldQuote.price).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                '$' + Number(g.price).toLocaleString('en-US', {
+                    minimumFractionDigits: 2, maximumFractionDigits: 2
                 });
-
-            var changeEl = document.getElementById('gold-change');
-            if (goldQuote.changePct !== null) {
-                var sign = goldQuote.changePct >= 0 ? '+' : '';
-                var cls  = goldQuote.changePct >= 0 ? 'up' : 'dn';
-                changeEl.innerHTML =
-                    '<span class="' + cls + '">' + sign +
-                    goldQuote.changePct.toFixed(2) + '% today</span>';
-            } else {
-                changeEl.innerHTML = '&nbsp;';
+            if (g.changePct != null) {
+                var s  = g.changePct >= 0 ? '+' : '';
+                var cl = g.changePct >= 0 ? 'up' : 'dn';
+                document.getElementById('gold-change').innerHTML =
+                    '<span class="' + cl + '">' + s + g.changePct.toFixed(2) + '% today</span>';
             }
-        } catch (err) {
-            console.error('Gold fetch failed:', err);
-            document.getElementById('gold-price').textContent = 'Error';
+        } catch (e) {
+            console.error('Gold:', e);
+            document.getElementById('gold-price').textContent = 'Unavailable';
         }
 
-        // Correlated asset groups
-        var results = await Promise.all([
-            renderGroup(ASSETS.positive, 'pos-tbody', false),
-            renderGroup(ASSETS.negative, 'neg-tbody', true)
+        var res = await Promise.all([
+            renderGroup(ASSETS.positive, 'pos-grid', false),
+            renderGroup(ASSETS.negative, 'neg-grid',  true)
         ]);
 
-        var bull = results[0].bull + results[1].bull;
-        var bear = results[0].bear + results[1].bear;
+        var bull = res[0].bull + res[1].bull;
+        var bear = res[0].bear + res[1].bear;
 
         document.getElementById('bull-count').textContent = bull;
         document.getElementById('bear-count').textContent = bear;
 
+        var sig   = computeSignal(bull, bear);
         var sigEl = document.getElementById('composite-signal');
-
-        if (bull === 0 && bear === 0) {
-            sigEl.textContent = 'NO DATA';
-            sigEl.className   = 'sig-val sig-na';
-        } else if (bull >= bear * 2) {
-            sigEl.textContent = 'STRONGLY BULLISH';
-            sigEl.className   = 'sig-val sig-bull';
-        } else if (bull > bear) {
-            sigEl.textContent = 'BULLISH';
-            sigEl.className   = 'sig-val sig-bull';
-        } else if (bear >= bull * 2) {
-            sigEl.textContent = 'STRONGLY BEARISH';
-            sigEl.className   = 'sig-val sig-bear';
-        } else if (bear > bull) {
-            sigEl.textContent = 'BEARISH';
-            sigEl.className   = 'sig-val sig-bear';
-        } else {
-            sigEl.textContent = 'MIXED';
-            sigEl.className   = 'sig-val sig-mixed';
-        }
+        sigEl.textContent = sig.text;
+        sigEl.className   = 'signal-main ' + sig.cls;
 
         document.getElementById('last-updated').textContent =
             new Date().toLocaleTimeString('en-GB');
     }
 
-    // -------------------------------------------------------
-    // Scheduler and countdown
-    // -------------------------------------------------------
+    // ----------------------------------------------------------
+    // Scheduler
+    // ----------------------------------------------------------
 
     function scheduleNext() {
         if (refreshTimeout) clearTimeout(refreshTimeout);
