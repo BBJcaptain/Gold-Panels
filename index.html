@@ -4,142 +4,204 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XAU/USD Correlation Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold:       #d4af37;
-            --gold-dim:   #7a5e0f;
-            --gold-glow:  rgba(212,175,55,0.09);
-            --bg:         #000000;
-            --surface:    #0b0b0b;
-            --card:       #0f0f0f;
-            --border:     #1c1c1c;
-            --border-lit: #2a2a2a;
-            --text:       #d4d4d4;
-            --sub:        #4b5563;
-            --bull:       #16a34a;
-            --bull-bright:#22c55e;
-            --bear:       #b91c1c;
-            --bear-bright:#ef4444;
-            --bull-bg:    rgba(22,163,74,0.13);
-            --bear-bg:    rgba(185,28,28,0.13);
+            --orange:        #fd8008;
+            --orange-dark:   #c96300;
+            --orange-glow:   rgba(253,128,8,0.18);
+            --orange-border: rgba(253,128,8,0.28);
+            --buy:           #26de81;
+            --buy-bg:        rgba(38,222,129,0.13);
+            --buy-border:    rgba(38,222,129,0.40);
+            --sell:          #ff3b30;
+            --sell-bg:       rgba(255,59,48,0.13);
+            --sell-border:   rgba(255,59,48,0.40);
+            --bg:            #1a1a1a;
+            --bg-card:       #232323;
+            --bg-panel:      linear-gradient(160deg,#2d2d2d 0%,#181818 100%);
+            --bg-tile-hdr:   linear-gradient(to bottom,#3a3a3a 0%,#252525 100%);
+            --text:          #feffff;
+            --text-sec:      rgba(255,255,255,0.72);
+            --text-muted:    rgba(255,255,255,0.48);
+            --text-faint:    rgba(255,255,255,0.24);
+            --border:        rgba(255,255,255,0.09);
+            --border-dim:    rgba(255,255,255,0.05);
+            --font-body:     'Barlow','Helvetica Neue',Arial,sans-serif;
+            --font-mono:     'JetBrains Mono','Courier New',monospace;
+            --font-serif:    'Times New Roman',Times,serif;
+            --radius:        8px;
+            --radius-sm:     4px;
+            --shadow:        0 6px 32px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.05) inset;
+            --max-w:         1280px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            padding: 0 0 60px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            line-height: 1.55;
             min-height: 100vh;
+            padding-bottom: 0;
         }
 
-        /* Header */
+        /* ── Header ─────────────────────────────────────────────── */
         .page-header {
-            padding: 36px 24px 28px;
+            padding: 26px 24px 18px;
             text-align: center;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 40px;
+            background: linear-gradient(to bottom, #272727, #1e1e1e);
+            border-bottom: 1px solid var(--orange-border);
         }
 
         .page-title {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.82rem;
+            font-family: var(--font-serif);
+            font-size: 0.88rem;
             font-weight: 400;
-            letter-spacing: 0.45em;
+            letter-spacing: 0.42em;
             text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 6px;
+            color: var(--orange);
+            margin-bottom: 5px;
         }
 
         .page-subtitle {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.6rem;
-            letter-spacing: 0.2em;
-            color: var(--sub);
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.18em;
+            color: var(--text-faint);
             text-transform: uppercase;
         }
 
-        /* Layout */
-        .layout {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 20px;
+        /* ── Status bar (top of page) ────────────────────────────── */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 8px 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-dim);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.06em;
         }
 
-        /* Hero row */
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-label { color: var(--text-faint); }
+        .status-val   { color: var(--text-muted); }
+        .orange-text  { color: var(--orange); }
+
+        button.refresh-btn {
+            background: linear-gradient(to bottom, #3a3a3a, #252525);
+            border: 1px solid var(--orange-border);
+            color: var(--orange);
+            border-radius: var(--radius-sm);
+            padding: 4px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+
+        button.refresh-btn:hover {
+            background: linear-gradient(to bottom, #4a3000, #2d1e00);
+            border-color: var(--orange);
+            color: #fff;
+        }
+
+        /* ── Layout ──────────────────────────────────────────────── */
+        .layout {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 28px 20px 0;
+        }
+
+        /* ── Hero row ────────────────────────────────────────────── */
         .hero-row {
             display: flex;
             justify-content: center;
             align-items: stretch;
-            gap: 16px;
-            margin-bottom: 48px;
+            gap: 14px;
+            margin-bottom: 36px;
             flex-wrap: wrap;
         }
 
         .hero {
-            background: var(--surface);
-            border: 1px solid var(--gold-dim);
-            border-radius: 16px;
-            padding: 32px 40px;
+            background: var(--bg-panel);
+            border: 1px solid var(--orange-border);
+            border-radius: var(--radius);
+            padding: 28px 40px;
             text-align: center;
-            min-width: 260px;
-            box-shadow: 0 0 80px var(--gold-glow), inset 0 1px 0 rgba(212,175,55,0.06);
-            position: relative;
-            overflow: hidden;
+            min-width: 240px;
+            box-shadow: var(--shadow);
         }
 
         .hero-eyebrow {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.6rem;
-            letter-spacing: 0.35em;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            color: var(--gold-dim);
-            margin-bottom: 14px;
+            color: var(--orange);
+            margin-bottom: 12px;
         }
 
         .hero-price {
-            font-size: 3rem;
+            font-family: var(--font-mono);
+            font-size: 2.8rem;
             font-weight: 700;
             font-variant-numeric: tabular-nums;
-            color: #ffffff;
+            color: var(--text);
             letter-spacing: 0.02em;
             line-height: 1;
         }
 
         .hero-change {
-            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
             margin-top: 10px;
             min-height: 1.4em;
             font-variant-numeric: tabular-nums;
         }
 
         .signal-card {
-            background: var(--surface);
-            border: 1px solid var(--border-lit);
-            border-radius: 16px;
-            padding: 24px 32px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px 32px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 10px;
-            min-width: 220px;
+            min-width: 200px;
+            box-shadow: var(--shadow);
         }
 
         .signal-eyebrow {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.6rem;
-            letter-spacing: 0.3em;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: var(--sub);
+            color: var(--text-faint);
         }
 
         .signal-main {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 1.3rem;
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
             line-height: 1.1;
             text-align: center;
@@ -147,15 +209,17 @@
 
         .signal-tally {
             display: flex;
-            gap: 16px;
+            gap: 18px;
         }
 
         .tally-item {
-            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            font-size: 11px;
             display: flex;
             align-items: center;
             gap: 5px;
             font-variant-numeric: tabular-nums;
+            color: var(--text-muted);
         }
 
         .tally-num {
@@ -163,107 +227,114 @@
             font-weight: 700;
         }
 
-        /* Section headings */
+        /* ── Section headings ────────────────────────────────────── */
         .section-label {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 14px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .section-label-text {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.65rem;
-            letter-spacing: 0.3em;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: var(--sub);
+            color: var(--text-faint);
             white-space: nowrap;
         }
 
         .section-rule {
             flex: 1;
             height: 1px;
-            background: var(--border);
+            background: var(--border-dim);
         }
 
         .section-pill {
-            font-size: 0.58rem;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            padding: 2px 10px;
-            border-radius: 20px;
+            padding: 3px 10px;
+            border-radius: var(--radius-sm);
             white-space: nowrap;
         }
 
-        .pill-bull { background: var(--bull-bg); color: var(--bull-bright); }
-        .pill-bear { background: var(--bear-bg); color: var(--bear-bright); }
+        .pill-bull { background: var(--buy-bg);  color: var(--buy);  border: 1px solid var(--buy-border);  }
+        .pill-bear { background: var(--sell-bg); color: var(--sell); border: 1px solid var(--sell-border); }
 
-        /* Card grid */
+        /* ── Card grid ───────────────────────────────────────────── */
         .card-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 10px;
-            margin-bottom: 44px;
+            margin-bottom: 36px;
         }
 
-        /* Asset card */
+        /* ── Asset card ──────────────────────────────────────────── */
         .asset-card {
-            background: var(--card);
+            background: var(--bg-panel);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 14px 14px 12px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            gap: 9px;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.18s;
+            transition: border-color 0.15s;
         }
 
-        .asset-card:hover { border-color: var(--border-lit); }
-
-        .card-accent {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-        }
-
-        .pos-card .card-accent { background: linear-gradient(90deg, var(--bull), transparent); }
-        .neg-card .card-accent { background: linear-gradient(90deg, var(--bear), transparent); }
+        .asset-card:hover { border-color: var(--orange-border); }
 
         .card-head {
             display: flex;
-            justify-content: space-between;
             align-items: flex-start;
-            gap: 6px;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px 13px 9px;
+            background: var(--bg-tile-hdr);
+            border-bottom: 1px solid var(--border-dim);
         }
 
+        .pos-card .card-head { border-bottom-color: rgba(38,222,129,0.15); }
+        .neg-card .card-head { border-bottom-color: rgba(255,59,48,0.15);  }
+
         .card-name {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.95rem;
+            font-family: var(--font-mono);
+            font-size: 13px;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--text);
             line-height: 1;
         }
 
         .card-desc {
-            font-size: 0.6rem;
-            color: var(--sub);
-            margin-top: 4px;
+            font-family: var(--font-body);
+            font-size: 10px;
+            color: var(--text-faint);
+            margin-top: 3px;
             line-height: 1.35;
         }
 
         .corr-tag {
-            font-size: 0.6rem;
+            font-family: var(--font-mono);
+            font-size: 10px;
             font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 2px 7px;
+            border-radius: var(--radius-sm);
             flex-shrink: 0;
             font-variant-numeric: tabular-nums;
         }
 
-        .corr-pos { background: var(--bull-bg); color: var(--bull-bright); }
-        .corr-neg { background: var(--bear-bg); color: var(--bear-bright); }
+        .corr-pos { background: var(--buy-bg);  color: var(--buy);  border: 1px solid var(--buy-border);  }
+        .corr-neg { background: var(--sell-bg); color: var(--sell); border: 1px solid var(--sell-border); }
+
+        .card-body-inner {
+            padding: 11px 13px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
 
         .card-price-row {
             display: flex;
@@ -273,117 +344,97 @@
         }
 
         .card-price {
-            font-size: 1.1rem;
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
             font-weight: 700;
             font-variant-numeric: tabular-nums;
-            color: #ffffff;
+            color: var(--text);
             line-height: 1;
         }
 
         .change-pill {
-            font-size: 0.68rem;
-            font-weight: 600;
-            padding: 1px 7px;
-            border-radius: 20px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: var(--radius-sm);
             font-variant-numeric: tabular-nums;
         }
 
-        .cpill-up { background: var(--bull-bg); color: var(--bull-bright); }
-        .cpill-dn { background: var(--bear-bg); color: var(--bear-bright); }
-        .cpill-na { background: rgba(75,85,99,0.12); color: var(--sub); }
+        .cpill-up { background: var(--buy-bg);  color: var(--buy);  border: 1px solid var(--buy-border);  }
+        .cpill-dn { background: var(--sell-bg); color: var(--sell); border: 1px solid var(--sell-border); }
+        .cpill-na { background: rgba(255,255,255,0.05); color: var(--text-faint); border: 1px solid var(--border); }
 
         .sparkline {
-            height: 34px;
+            height: 32px;
             overflow: hidden;
             border-radius: 3px;
         }
 
-        .sparkline svg {
-            display: block;
-            width: 100%;
-            height: 34px;
-        }
+        .sparkline svg { display: block; width: 100%; height: 32px; }
 
         .card-signal {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.68rem;
+            font-family: var(--font-mono);
+            font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             text-align: center;
-            padding-top: 8px;
-            border-top: 1px solid var(--border);
+            padding-top: 7px;
+            border-top: 1px solid var(--border-dim);
         }
 
-        .csig-bull { color: var(--bull-bright); }
-        .csig-bear { color: var(--bear-bright); }
-        .csig-na   { color: var(--sub); }
-        .sig-mixed { color: var(--gold); }
+        .csig-bull { color: var(--buy);  }
+        .csig-bear { color: var(--sell); }
+        .csig-na   { color: var(--text-faint); }
+        .sig-mixed { color: var(--orange); }
 
         .card-loading {
-            font-size: 0.72rem;
-            color: var(--sub);
-            font-style: italic;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-faint);
             padding: 8px 0;
         }
 
         .card-err {
-            font-size: 0.68rem;
-            color: var(--bear-bright);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--sell);
             padding: 4px 0;
             line-height: 1.4;
         }
 
-        /* Footer */
+        /* ── Footer ──────────────────────────────────────────────── */
         .page-footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            margin-top: 32px;
+        }
+
+        .footer-credit-row {
             display: flex;
             justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            font-size: 0.66rem;
-            color: var(--sub);
-            padding-top: 8px;
-            border-top: 1px solid var(--border);
+            padding: 10px 18px;
         }
 
-        .footer-note {
-            text-align: center;
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 0.58rem;
+        .footer-credit {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
             letter-spacing: 0.06em;
-            color: var(--sub);
-            opacity: 0.45;
-            margin-top: 16px;
+            text-align: center;
         }
 
-        .gold-text { color: var(--gold); }
-        .up { color: var(--bull-bright); }
-        .dn { color: var(--bear-bright); }
+        /* ── Utility ─────────────────────────────────────────────── */
+        .up { color: var(--buy);  }
+        .dn { color: var(--sell); }
 
-        button.refresh-btn {
-            background: none;
-            border: 1px solid var(--border-lit);
-            color: var(--sub);
-            border-radius: 6px;
-            padding: 4px 13px;
-            font-size: 0.66rem;
-            cursor: pointer;
-            font-family: inherit;
-            transition: border-color 0.18s, color 0.18s;
-        }
-
-        button.refresh-btn:hover {
-            border-color: var(--gold-dim);
-            color: var(--gold);
-        }
-
-        /* Responsive */
+        /* ── Responsive ──────────────────────────────────────────── */
         @media (max-width: 1100px) { .card-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 860px)  { .card-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 600px)  {
             .card-grid { grid-template-columns: repeat(2, 1fr); }
-            .hero-price { font-size: 2.3rem; }
+            .hero-price { font-size: 2.2rem; }
         }
         @media (max-width: 380px)  { .card-grid { grid-template-columns: 1fr; } }
     </style>
@@ -394,6 +445,18 @@
     <div class="page-title">XAU / USD &nbsp; Correlation Panel</div>
     <div class="page-subtitle">Live Asset Signals &nbsp;&middot;&nbsp; Gold Market Intelligence</div>
 </header>
+
+<div class="status-bar">
+    <span class="status-item">
+        <span class="status-label">Updated</span>
+        <span class="status-val" id="last-updated">Never</span>
+    </span>
+    <span class="status-item">
+        <span class="status-label">Next refresh in</span>
+        <span class="orange-text" id="countdown">15:00</span>
+    </span>
+    <button class="refresh-btn" onclick="triggerUpdate()">&#8635; Refresh Now</button>
+</div>
 
 <div class="layout">
 
@@ -408,14 +471,14 @@
             <div class="signal-main csig-na" id="composite-signal">Loading</div>
             <div class="signal-tally">
                 <div class="tally-item">
-                    <span style="color:var(--bull-bright)">&#9650;</span>
-                    <span class="tally-num" style="color:var(--bull-bright)" id="bull-count">0</span>
-                    <span style="color:var(--sub)">bull</span>
+                    <span style="color:var(--buy)">&#9650;</span>
+                    <span class="tally-num" style="color:var(--buy)" id="bull-count">0</span>
+                    <span>bull</span>
                 </div>
                 <div class="tally-item">
-                    <span style="color:var(--bear-bright)">&#9660;</span>
-                    <span class="tally-num" style="color:var(--bear-bright)" id="bear-count">0</span>
-                    <span style="color:var(--sub)">bear</span>
+                    <span style="color:var(--sell)">&#9660;</span>
+                    <span class="tally-num" style="color:var(--sell)" id="bear-count">0</span>
+                    <span>bear</span>
                 </div>
             </div>
         </div>
@@ -435,22 +498,19 @@
     </div>
     <div class="card-grid" id="neg-grid"></div>
 
-    <div class="page-footer">
-        <span>Updated: <span id="last-updated">Never</span></span>
-        <span>Next refresh in <span class="gold-text" id="countdown">15:00</span></span>
-        <button class="refresh-btn" onclick="triggerUpdate()">&#8635; Refresh Now</button>
-    </div>
-    <p class="footer-note">Data via Yahoo Finance &nbsp;&middot;&nbsp; Prices delayed up to 15 minutes &nbsp;&middot;&nbsp; Correlation coefficients are 1yr rolling approximations</p>
-
 </div>
+
+<footer class="page-footer">
+    <div class="footer-credit-row">
+        <span class="footer-credit">Data via Yahoo Finance &nbsp;&middot;&nbsp; Prices delayed up to 15 minutes &nbsp;&middot;&nbsp; Correlation coefficients are 1yr rolling approximations</span>
+    </div>
+</footer>
 
 <script>
     var CORS_PROXY = 'https://corsproxy.io/?url=';
     var YF_BASE    = 'https://query1.finance.yahoo.com/v8/finance/chart/';
     var REFRESH_MS = 900000;
 
-    // GC=F (gold futures) is more reliably served than XAUUSD=X through a CORS proxy.
-    // XAUUSD=X is kept as fallback.
     var GOLD_TICKERS = ['GC=F', 'XAUUSD=X'];
 
     var ASSETS = {
@@ -482,6 +542,26 @@
 
     var refreshTimeout = null;
     var secondsLeft    = REFRESH_MS / 1000;
+    var lastUpdateTime = null;
+
+    // ----------------------------------------------------------
+    // Relative time
+    // ----------------------------------------------------------
+
+    function relativeTime(ts) {
+        if (!ts) return 'Never';
+        var diff = Math.floor((Date.now() - ts) / 1000);
+        if (diff < 10)  return 'just now';
+        if (diff < 60)  return diff + 's ago';
+        var mins = Math.floor(diff / 60);
+        if (mins < 60)  return mins + ' min' + (mins === 1 ? '' : 's') + ' ago';
+        var hrs = Math.floor(mins / 60);
+        return hrs + ' hr' + (hrs === 1 ? '' : 's') + ' ago';
+    }
+
+    function updateRelativeTime() {
+        document.getElementById('last-updated').textContent = relativeTime(lastUpdateTime);
+    }
 
     // ----------------------------------------------------------
     // Fetch
@@ -530,15 +610,15 @@
 
     function sparklineSVG(prices, changePct) {
         if (!prices || prices.length < 3) {
-            return '<svg viewBox="0 0 100 34" preserveAspectRatio="none">' +
-                   '<line x1="0" y1="17" x2="100" y2="17" stroke="#222" stroke-width="1"/>' +
+            return '<svg viewBox="0 0 100 32" preserveAspectRatio="none">' +
+                   '<line x1="0" y1="16" x2="100" y2="16" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>' +
                    '</svg>';
         }
         var pts  = prices.slice(-78);
         var min  = Math.min.apply(null, pts);
         var max  = Math.max.apply(null, pts);
         var span = (max - min) || 1;
-        var W = 100; var H = 34; var pad = 3;
+        var W = 100; var H = 32; var pad = 3;
 
         var coords = pts.map(function(p, i) {
             var x = (i / (pts.length - 1)) * W;
@@ -547,16 +627,16 @@
         });
 
         var up     = changePct == null ? null : (changePct >= 0);
-        var stroke = up === null ? '#3a3a3a' : (up ? '#16a34a' : '#b91c1c');
+        var stroke = up === null ? 'rgba(255,255,255,0.15)' : (up ? '#26de81' : '#ff3b30');
         var fill   = up === null
-            ? 'rgba(58,58,58,0.06)'
-            : (up ? 'rgba(22,163,74,0.07)' : 'rgba(185,28,28,0.07)');
+            ? 'rgba(255,255,255,0.03)'
+            : (up ? 'rgba(38,222,129,0.07)' : 'rgba(255,59,48,0.07)');
 
         var lastX  = coords[coords.length - 1].split(',')[0];
         var fillPt = coords.join(' ') + ' ' + lastX + ',' + H + ' 0,' + H;
 
         return '<svg viewBox="0 0 ' + W + ' ' + H +
-               '" preserveAspectRatio="none" width="100%" height="34">' +
+               '" preserveAspectRatio="none" width="100%" height="32">' +
                '<polygon points="' + fillPt + '" fill="' + fill + '"/>' +
                '<polyline points="' + coords.join(' ') +
                '" fill="none" stroke="' + stroke +
@@ -598,7 +678,6 @@
         return {
             goldSignal: gs,
             html: '<div class="asset-card ' + side + '">' +
-                  '<div class="card-accent"></div>' +
                   '<div class="card-head">' +
                     '<div>' +
                       '<div class="card-name">' + asset.label + '</div>' +
@@ -606,12 +685,14 @@
                     '</div>' +
                     '<span class="corr-tag ' + ctag + '">' + asset.corr + '</span>' +
                   '</div>' +
-                  '<div class="card-price-row">' +
-                    '<span class="card-price">' + price + '</span>' +
-                    ch.html +
+                  '<div class="card-body-inner">' +
+                    '<div class="card-price-row">' +
+                      '<span class="card-price">' + price + '</span>' +
+                      ch.html +
+                    '</div>' +
+                    '<div class="sparkline">' + spark + '</div>' +
+                    '<div class="card-signal">' + getSignalHtml(gs) + '</div>' +
                   '</div>' +
-                  '<div class="sparkline">' + spark + '</div>' +
-                  '<div class="card-signal">' + getSignalHtml(gs) + '</div>' +
                   '</div>'
         };
     }
@@ -622,7 +703,6 @@
         return {
             goldSignal: 0,
             html: '<div class="asset-card ' + side + '">' +
-                  '<div class="card-accent"></div>' +
                   '<div class="card-head">' +
                     '<div>' +
                       '<div class="card-name">' + asset.label + '</div>' +
@@ -630,8 +710,10 @@
                     '</div>' +
                     '<span class="corr-tag ' + ctag + '">' + asset.corr + '</span>' +
                   '</div>' +
-                  '<div class="card-err">&#9888; ' + (err.message || 'Fetch failed') + '</div>' +
-                  '<div class="card-signal"><span class="csig-na">Neutral</span></div>' +
+                  '<div class="card-body-inner">' +
+                    '<div class="card-err">&#9888; ' + (err.message || 'Fetch failed') + '</div>' +
+                    '<div class="card-signal"><span class="csig-na">Neutral</span></div>' +
+                  '</div>' +
                   '</div>'
         };
     }
@@ -639,9 +721,12 @@
     function skeletonCard(asset, isNeg) {
         var side = isNeg ? 'neg-card' : 'pos-card';
         return '<div class="asset-card ' + side + '">' +
-               '<div class="card-accent"></div>' +
-               '<div class="card-name">' + asset.label + '</div>' +
-               '<div class="card-loading">Loading...</div>' +
+               '<div class="card-head">' +
+                 '<div class="card-name">' + asset.label + '</div>' +
+               '</div>' +
+               '<div class="card-body-inner">' +
+                 '<div class="card-loading">Loading...</div>' +
+               '</div>' +
                '</div>';
     }
 
@@ -652,9 +737,6 @@
     async function renderGroup(assets, gridId, isNeg) {
         document.getElementById(gridId).innerHTML =
             assets.map(function(a) { return skeletonCard(a, isNeg); }).join('');
-
-        var bull = 0;
-        var bear = 0;
 
         var promises = assets.map(async function(asset) {
             try {
@@ -667,6 +749,7 @@
         });
 
         var cards = await Promise.all(promises);
+        var bull = 0, bear = 0;
         cards.forEach(function(c) {
             if (c.goldSignal === 1)  bull++;
             if (c.goldSignal === -1) bear++;
@@ -684,7 +767,7 @@
 
     function computeSignal(bull, bear) {
         var total = bull + bear;
-        if (total === 0) return { text: 'No Data',        cls: 'csig-na' };
+        if (total === 0) return { text: 'No Data',         cls: 'csig-na' };
         var r = bull / total;
         if (r >= 0.80)   return { text: 'Strongly Bullish', cls: 'csig-bull' };
         if (r >= 0.60)   return { text: 'Bullish',          cls: 'csig-bull' };
@@ -731,8 +814,8 @@
         sigEl.textContent = sig.text;
         sigEl.className   = 'signal-main ' + sig.cls;
 
-        document.getElementById('last-updated').textContent =
-            new Date().toLocaleTimeString('en-GB');
+        lastUpdateTime = Date.now();
+        updateRelativeTime();
     }
 
     // ----------------------------------------------------------
@@ -758,6 +841,7 @@
         var s = secondsLeft % 60;
         document.getElementById('countdown').textContent =
             String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        updateRelativeTime();
     }, 1000);
 
     triggerUpdate();
